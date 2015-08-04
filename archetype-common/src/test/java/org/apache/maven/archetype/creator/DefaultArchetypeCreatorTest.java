@@ -154,8 +154,21 @@ public class DefaultArchetypeCreatorTest
 		assertContent( template, "class ${someProperty}" );
     }
 
-    public void testCreateFilesetArchetype1()
+    public void testExcludePatternsMustExcludeDirectory()
         throws Exception
+    {
+        String project = "exclude-patterns";
+        createFilesetArchetype( project );
+
+        File template = getTemplateFile( project, ".toexclude/dummy.file");
+        assertNotExists(template);
+
+        File template1 = getTemplateFile( project, "nottoexclude/dummy.file" );
+        assertExists(template1);
+    }
+
+    public void testCreateFilesetArchetype1()
+    throws Exception
     {
         String project = "create-1";
 
@@ -389,7 +402,7 @@ public class DefaultArchetypeCreatorTest
     }
 
     private void assertContent( File template, String content )
-        throws FileNotFoundException, IOException
+    throws FileNotFoundException, IOException
     {
         String templateContent = FileUtils.fileRead( template, "UTF-8" );
         assertTrue( "File " + template + " does not contain " + content,
@@ -399,6 +412,11 @@ public class DefaultArchetypeCreatorTest
     private void assertExists( File file )
     {
         assertTrue( "File doesn't exist: " + file.getAbsolutePath(), file.exists() );
+    }
+
+    private void assertNotExists( File file )
+    {
+        assertFalse( "File exists: " + file.getAbsolutePath(), file.exists() );
     }
 
     private void assertNotContent( File template, String content )
